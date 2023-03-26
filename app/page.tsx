@@ -1,91 +1,82 @@
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
-import styles from './page.module.css'
+"use client";
+import React, { useEffect, useState } from "react";
+import { useAuthContext } from "./context/authcontext";
+import { useRouter } from "next/navigation";
+import newtodo from "@/lib/newtodo";
+import get_todos from "@/lib/get_todos";
+import { Trash2 } from "react-feather";
+import delete_todo from "@/lib/delete";
 
-const inter = Inter({ subsets: ['latin'] })
+const Home = () => {
+  const user = useAuthContext();
+  const router = useRouter();
+  const [data, setData] = useState([]);
+  React.useEffect(() => {
+    if (user.user == null) {
+      router.push("/signin");
+    }
+  }, [user]);
 
-export default function Home() {
+  const [value, setValue] = useState("");
+
+  const getDatas = async () => {
+    await newtodo("user", user.user.email, { value: value });
+    get_todos("user", user.user.email)
+      .then((res) => {
+        if (res.result) {
+          setData(res.result.todos.reverse());
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    getDatas();
+  }
+
+  useEffect(() => {
+    getDatas();
+  }, []);
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="h-screen flex p-4 flex-col items-center">
+      <div className="w-full md:w-3/5 bg-red-500 px-4 py-6 rounded-lg">
+        <form onSubmit={handleSubmit} className="flex justify-around">
+          <input
+            className="w-3/4 md:w-4/5 rounded-md p-4 h-11"
+            type="text"
+            required
+            onChange={(e) => setValue(e.target.value)}
+          />
+          <button
+            className="px-4 md:px-10 md:text-xl py-2 bg-white rounded-md "
+            type="submit"
           >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+            New
+          </button>
+        </form>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+      <ul className="w-full md:w-3/5">
+        {data.map((todo, index) => (
+          <li
+            className="px-6 py-4 bg-gray-200 rounded-md my-4 w-full flex justify-between items-center"
+            key={index}
+          >
+            {todo.value}
+            <button
+              onClick={() => {
+                delete_todo("user", user.user.email, { value: todo.value });
+                getDatas();
+              }}
+              className="bg-red-500 rounded-md p-2"
+            >
+              <Trash2 className="text-slate-100" />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+export default Home;
