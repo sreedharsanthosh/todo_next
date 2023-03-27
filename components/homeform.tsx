@@ -1,4 +1,4 @@
-const Homeform = ({ onChange, ...props }) => {
+const Homeform = ({ value = "", onChange, ...props }) => {
   return (
     <div className="w-full md:w-3/5 bg-red-500 px-4 py-6 rounded-lg">
       <form {...props} className="flex justify-around">
@@ -6,6 +6,7 @@ const Homeform = ({ onChange, ...props }) => {
           className="w-3/4 md:w-4/5 rounded-md p-4 h-11"
           type="text"
           required
+          value={value}
           onChange={onChange}
         />
         <button

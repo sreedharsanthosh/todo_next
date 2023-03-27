@@ -10,8 +10,15 @@ export const AuthContext = React.createContext({});
 
 export const useAuthContext = () => React.useContext(AuthContext);
 
+interface User {
+  uid: string;
+  email: string;
+  emailVerified: boolean;
+  displayName: string;
+}
+
 export const AuthContextProvider = ({ children }: any) => {
-  const [user, setUser] = React.useState(null);
+  const [user, setUser] = React.useState<User | null>(null);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {

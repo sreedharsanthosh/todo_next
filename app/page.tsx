@@ -4,7 +4,6 @@ import { useAuthContext } from "./context/authcontext";
 import { useRouter } from "next/navigation";
 import newtodo from "@/lib/newtodo";
 import get_todos from "@/lib/get_todos";
-import { Trash2 } from "react-feather";
 import delete_todo from "@/lib/delete";
 import Homeform from "@/components/homeform";
 import TodoItem from "@/components/todoitem";
@@ -22,7 +21,6 @@ const Home = () => {
   const [value, setValue] = useState("");
 
   const getDatas = async () => {
-    await newtodo("user", user.user.email, { value: value });
     get_todos("user", user.user.email)
       .then((res) => {
         if (res.result) {
@@ -34,6 +32,8 @@ const Home = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    await newtodo("user", user.user.email, { value: value });
+    setValue("");
     getDatas();
   }
 
@@ -44,6 +44,7 @@ const Home = () => {
   return (
     <div className="h-screen flex p-4 flex-col items-center">
       <Homeform
+        value={value}
         onChange={(e: any) => setValue(e.target.value)}
         onSubmit={handleSubmit}
       />
