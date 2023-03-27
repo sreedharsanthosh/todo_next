@@ -5,6 +5,7 @@ import signin from "@/lib/signin";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Alert from "@/components/alert";
+import Input from "@/components/Input";
 
 const SignupPage = () => {
   const [email, setEmail] = useState("");
@@ -32,30 +33,22 @@ const SignupPage = () => {
         <h1 className="text-2xl font-bold decoration-slate-900 underline ">
           Welcome Back
         </h1>
-        <div className="flex justify-between items-center w-11/12">
-          <label htmlFor="email" className="text-sm">
-            Email
-          </label>
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-3/4 md:w-4/5 rounded-md p-4 h-11 border-2 border-gray-200 "
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div className="flex justify-between items-center w-11/12">
-          <label htmlFor="password" className="text-sm">
-            Password
-          </label>
-          <input
-            type="password"
-            placeholder="Password (Atleast 8 characters)"
-            className="w-3/4 md:w-4/5 rounded-md p-4 h-11 border-2 border-gray-200"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
+        <Input
+          label="Email"
+          type="email"
+          placeholder="Email"
+          onChange={(e) => {
+            setEmail(e.target.value);
+          }}
+        />
+        <Input
+          label="Password"
+          type="password"
+          placeholder="Password (Atleast 8 characters)"
+          onChange={(e) => {
+            setPassword(e.target.value);
+          }}
+        />
         <button
           type="submit"
           className="px-4 md:px-10 py-2 bg-white rounded-md border-gray-200 border-2"
